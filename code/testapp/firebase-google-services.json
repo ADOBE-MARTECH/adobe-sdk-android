@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "541264256097",
+    "project_id": "ajoapp-test",
+    "storage_bucket": "ajoapp-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541264256097:android:c436b28adc9277bbd49e20",
+        "android_client_info": {
+          "package_name": "com.adobe.marketing.mobile.messagingsample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGlqOt7QFQtiKSn62NT2pvWGMRZX6qPag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

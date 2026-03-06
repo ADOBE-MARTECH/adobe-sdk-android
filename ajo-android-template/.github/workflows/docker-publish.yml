@@ -1,0 +1,57 @@
+# Este es un flujo de trabajo de GitHub Actions.
+# Se ejecutará automáticamente cada vez que hagas un 'push' a tu rama 'main'.
+# Su objetivo es construir la imagen de Docker completa (con tu app y el emulador)
+# y publicarla en el GitHub Container Registry (GHCR), para que esté disponible
+# para ser usada en cualquier lugar.
+
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [ "main" ] # Se dispara solo en la rama principal
+
+jobs:
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest # Se ejecuta en una máquina virtual Linux proporcionada por GitHub
+
+    steps:
+      # Paso 1: Descargar tu código del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Paso 2: Iniciar sesión en el GitHub Container Registry (GHCR)
+      # GHCR es el registro de imágenes de Docker de GitHub. Es como Docker Hub, pero integrado.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          # El GITHUB_TOKEN es un secreto especial que GitHub proporciona automáticamente
+          # para autenticar acciones dentro de tu propio repositorio.
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Paso 3: Extraer metadatos de la imagen
+      # Este paso crea etiquetas útiles para la imagen de Docker, como el nombre del repositorio.
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      # Paso 4: Construir y publicar la imagen de Docker
+      # Este es el paso más importante. Es el equivalente a lo que haces en tu máquina local.
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # --- INYECCIÓN SEGURA DE SECRETOS EN CI/CD ---
+          # Aquí tomamos los secretos que has guardado en los "Secrets" de tu repositorio de GitHub
+          # y se los pasamos como argumentos de compilación (--build-arg) al Dockerfile.
+          # Esto es EXACTAMENTE lo mismo que hacemos localmente, pero de forma automatizada.
+          build-args: |
+            GOOGLE_SERVICES_JSON_CONTENT_ARG=${{ secrets.GOOGLE_SERVICES_JSON_CONTENT }}
+            ADOBE_APP_ID_ARG=${{ secrets.ADOBE_APP_ID }}
+            ADOBE_ASSURANCE_SESSION_ID_ARG=${{ secrets.ADOBE_ASSURANCE_SESSION_ID }}

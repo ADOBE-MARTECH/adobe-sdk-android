@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AJO Template App"
+        android:textSize="24sp"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnSetPushIdentifier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. Set Push Identifier" />
+
+    <EditText
+        android:id="@+id/editTextImageTrigger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter In-App event name"
+        android:layout_marginTop="16dp"
+        android:text="iam_trigger_event"/>
+
+    <Button
+        android:id="@+id/btnTriggerIam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2. Trigger In-App Message" />
+
+    <Button
+        android:id="@+id/btnResetIdentities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Reset Identities (Debug)" />
+
+</LinearLayout>

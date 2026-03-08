@@ -34,6 +34,13 @@
         android:text="2. Trigger In-App Message" />
 
     <Button
+        android:id="@+id/btnCustomDemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="3. Custom AJO Demo" />
+
+    <Button
         android:id="@+id/btnResetIdentities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

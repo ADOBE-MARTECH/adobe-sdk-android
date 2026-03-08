@@ -1,57 +1,37 @@
-# Este es un flujo de trabajo de GitHub Actions.
-# Se ejecutará automáticamente cada vez que hagas un 'push' a tu rama 'main'.
-# Su objetivo es construir la imagen de Docker completa (con tu app y el emulador)
-# y publicarla en el GitHub Container Registry (GHCR), para que esté disponible
-# para ser usada en cualquier lugar.
-
-name: Build and Publish Docker Image
+name: Build and Push to Docker Hub
 
 on:
   push:
-    branches: [ "main" ] # Se dispara solo en la rama principal
+    branches: [ "main", "master" ] # Añadido master ya que en tu foto el repo usa 'master'
 
 jobs:
-  build-and-push-docker-image:
-    runs-on: ubuntu-latest # Se ejecuta en una máquina virtual Linux proporcionada por GitHub
+  build-and-push:
+    runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Descargar tu código del repositorio
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Paso 2: Iniciar sesión en el GitHub Container Registry (GHCR)
-      # GHCR es el registro de imágenes de Docker de GitHub. Es como Docker Hub, pero integrado.
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          # El GITHUB_TOKEN es un secreto especial que GitHub proporciona automáticamente
-          # para autenticar acciones dentro de tu propio repositorio.
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Paso 3: Extraer metadatos de la imagen
-      # Este paso crea etiquetas útiles para la imagen de Docker, como el nombre del repositorio.
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ secrets.DOCKER_USERNAME }}/ajo-android-template
 
-      # Paso 4: Construir y publicar la imagen de Docker
-      # Este es el paso más importante. Es el equivalente a lo que haces en tu máquina local.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}, ${{ secrets.DOCKER_USERNAME }}/ajo-android-template:latest
           labels: ${{ steps.meta.outputs.labels }}
-          # --- INYECCIÓN SEGURA DE SECRETOS EN CI/CD ---
-          # Aquí tomamos los secretos que has guardado en los "Secrets" de tu repositorio de GitHub
-          # y se los pasamos como argumentos de compilación (--build-arg) al Dockerfile.
-          # Esto es EXACTAMENTE lo mismo que hacemos localmente, pero de forma automatizada.
           build-args: |
-            GOOGLE_SERVICES_JSON_CONTENT_ARG=${{ secrets.GOOGLE_SERVICES_JSON_CONTENT }}
-            ADOBE_APP_ID_ARG=${{ secrets.ADOBE_APP_ID }}
-            ADOBE_ASSURANCE_SESSION_ID_ARG=${{ secrets.ADOBE_ASSURANCE_SESSION_ID }}
+            GOOGLE_SERVICES_JSON_CONTENT=${{ secrets.GOOGLE_SERVICES_JSON_CONTENT }}
+            ADOBE_APP_ID=${{ secrets.ADOBE_APP_ID }}
+            ADOBE_ASSURANCE_SESSION_ID=${{ secrets.ADOBE_ASSURANCE_SESSION_ID }}

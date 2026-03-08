@@ -1,8 +1,4 @@
-# Archivos de configuración local y secretos
-# ¡NUNCA subas estos archivos a tu repositorio!
-.env.local
-/app/google-services.json
-local.properties
+
 
 # Archivos y carpetas generados por el IDE y el sistema de compilación
 *.iml

@@ -1,3 +1,5 @@
+import java.io.File
+
 // Este archivo define la configuración a nivel de todo el proyecto.
 
 pluginManagement {
@@ -20,5 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "AJO Android Template"
 
 // Incluimos nuestro único módulo de aplicación, llamado "app".
-// Esta estructura es más simple y estándar que la del proyecto original.
 include(":app")

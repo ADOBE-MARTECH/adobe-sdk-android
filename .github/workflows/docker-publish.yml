@@ -2,7 +2,7 @@ name: Build and Push to Docker Hub
 
 on:
   push:
-    branches: [ "main", "master" ] # Añadido master ya que en tu foto el repo usa 'master'
+    branches: [ "main", "master" ]
 
 jobs:
   build-and-push:
@@ -29,9 +29,6 @@ jobs:
         with:
           context: .
           push: true
+          # Notar que ya no enviamos build-args, ya que el .env.local está en el contexto (COPY .)
           tags: ${{ steps.meta.outputs.tags }}, ${{ secrets.DOCKER_USERNAME }}/ajo-android-template:latest
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            GOOGLE_SERVICES_JSON_CONTENT=${{ secrets.GOOGLE_SERVICES_JSON_CONTENT }}
-            ADOBE_APP_ID=${{ secrets.ADOBE_APP_ID }}
-            ADOBE_ASSURANCE_SESSION_ID=${{ secrets.ADOBE_ASSURANCE_SESSION_ID }}

@@ -1,5 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
+import java.io.File
 
 // Las propiedades se leerán directamente
 val envProperties = Properties()
@@ -7,6 +8,10 @@ val envFile = project.rootDir.resolve(".env.local")
 if (envFile.exists()) {
     envProperties.load(FileInputStream(envFile))
 }
+
+// Nota: La generación del google-services.json ahora se realiza en settings.gradle.kts
+// para asegurar que el archivo exista antes de que los plugins sean evaluados.
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -60,31 +65,4 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-}
-
-tasks.register("generateGoogleServicesJson") {
-    doLast {
-        val envFile = rootProject.file(".env.local")
-        if (envFile.exists()) {
-            val fileContent = envFile.readText()
-            val marker = "GOOGLE_SERVICES_JSON_CONTENT="
-            val startIndex = fileContent.indexOf(marker)
-            if (startIndex != -1) {
-                var jsonPart = fileContent.substring(startIndex + marker.length).trim()
-                val lastBraceIndex = jsonPart.lastIndexOf('}')
-                if (lastBraceIndex != -1) {
-                    val finalJson = jsonPart.substring(0, lastBraceIndex + 1)
-                    val googleServicesJsonFile = file("google-services.json")
-                    googleServicesJsonFile.writeText(finalJson)
-                    println("SUCCESS: Generated google-services.json from .env.local")
-                }
-            }
-        }
-    }
-}
-
-tasks.whenTaskAdded {
-    if (name.startsWith("process") && name.endsWith("GoogleServices")) {
-        dependsOn("generateGoogleServicesJson")
-    }
 }
